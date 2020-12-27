@@ -4,12 +4,6 @@
     file:
      state: directory
      path: "/dvd" 
-
-  - name: " create directory"
-    file:
-     state: directory
-     path: "/root/myweb" 
-
   - mount:
      src: "/dev/cdrom"
      path: "/dvd"
