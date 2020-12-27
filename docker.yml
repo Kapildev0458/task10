@@ -1,0 +1,65 @@
+- hosts: all
+  tasks:
+  - name: "directory for mount dvd"
+    file:
+     state: directory
+     path: "/dvd" 
+
+  - name: " create directory"
+    file:
+     state: directory
+     path: "/root/myweb" 
+
+  - mount:
+     src: "/dev/cdrom"
+     path: "/dvd"
+     state: mounted
+     fstype: "iso9660"
+
+  - yum_repository:
+     baseurl: "/dvd/AppStream"
+     name: "mydvd1"
+     description: "for install"
+     gpgcheck: no
+
+  - yum_repository:
+     baseurl: "/dvd/BaseOS"
+     name: "mydvd2"
+     description: "for install"
+     gpgcheck: no
+
+  - yum_repository:
+     baseurl: "https://download.docker.com/linux/centos/7/x86_64/stable"
+     name: "docker"
+     description: "for install docker"
+     gpgcheck: no
+
+  - name: "download docker"
+    command: "yum install docker-ce --nobest -y"
+
+  - name: "install python3"
+    package:
+     name: "python3"
+     state: present
+
+  - pip:
+     name: "docker-py"
+
+  - name: "start docker service"
+    service:
+     name: "docker"
+     state: restarted
+
+  - name: "pull httpd docker image"
+    docker_image:
+     name: "httpd"
+     source: pull
+
+  - name: "install docker container"
+    docker_container:
+     name: "myserver"
+     image: "httpd"
+     ports:
+      - "8081:80"
+
+      
